@@ -50,7 +50,21 @@ def main():
                                 env=env, timeout=30)
         if result.returncode != 0 or "Traceback" in result.stdout:
             raise AssertionError(f"EOF handling: {folder}\n{result.stdout}")
-    print(f"Interactive checks passed: {len(CASES)} scenarios and 6 EOF checks")
+    launcher_input = ("4\n1\n1\nда\n0\n5\n2\n6 7\n0\n"
+                      "6\n1\n3\n1\n0\n3\n2\n7\n0\n"
+                      "7\n4\n-7 2 -3\n0\n2\n2\n5\n\n0\n"
+                      "1\n1\n-5\n4\n0\n")
+    result = subprocess.run([sys.executable, str(ROOT / "main.py")],
+                            input=launcher_input, text=True, encoding="utf-8",
+                            stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                            cwd=ROOT.parent, env=env, timeout=60)
+    expected_results = ("К оплате: 162.00", "Бот: Площадь: 42.00",
+                        "Бот: Площадь: 9.00", "Площадь: 49.00",
+                        "[-7.0, -3.0, 2.0]", "площадь = 25", "Действительные корни")
+    if result.returncode != 0 or "Traceback" in result.stdout or not all(
+            value in result.stdout for value in expected_results):
+        raise AssertionError(f"Common launcher\n{result.stdout}")
+    print(f"Interactive checks passed: {len(CASES)} scenarios, 6 EOF checks, all 7 launcher entries")
 
 
 if __name__ == "__main__":
