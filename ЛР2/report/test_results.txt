@@ -3,6 +3,6 @@ test_rectangle_square (test_figures.TestFigures.test_rectangle_square) ... ok
 test_square_square (test_figures.TestFigures.test_square_square) ... ok
 
 ----------------------------------------------------------------------
-Ran 3 tests in 0.000s
+Ran 3 tests in 0.001s
 
 OK

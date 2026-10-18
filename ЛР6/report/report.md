@@ -20,20 +20,20 @@
 Список курса: https://github.com/ugapanyuk/courses_content/wiki/COURSE_PCPL_MAIN
 
 ## 3 Структура и логика программы
-ConversationHandler содержит ровно три состояния: SHAPE = 0, DIMENSIONS = 1 и CONFIRM = 2. /start открывает SHAPE. Корректный выбор фигуры переводит в DIMENSIONS. Корректные размеры переводят в CONFIRM. Да выводит площадь и завершает разговор через END; Заново возвращает в SHAPE. Ошибки сохраняют текущее состояние. /cancel завершает разговор на любой стадии, /start позволяет начать заново. END - служебный маркер завершения библиотеки, а не четвертое состояние states. Бот работает в личных сообщениях; concurrent_updates(False) обеспечивает последовательную обработку. Данные отдельного пользователя находятся в context.user_data и очищаются при завершении. Размеры принимаются с десятичной точкой или запятой, для прямоугольника - через пробел.
+ConversationHandler содержит ровно три состояния: SHAPE = 0, DIMENSIONS = 1 и CONFIRM = 2. /start открывает SHAPE. Корректный выбор фигуры переводит в DIMENSIONS. Корректные размеры переводят в CONFIRM. Да выводит площадь и завершает разговор через END; Заново возвращает в SHAPE. Ошибки сохраняют текущее состояние. /cancel завершает разговор на любой стадии, /start позволяет начать заново. END - служебный маркер завершения библиотеки, а не четвертое состояние states. Бот работает в личных сообщениях; concurrent_updates(False) обеспечивает последовательную обработку. Данные отдельного пользователя находятся в context.user_data и очищаются при завершении. Размеры принимаются с десятичной точкой или запятой, для прямоугольника - через пробел. Обычный запуск main.py открывает ручной ввод: пользователь выбирает пункт меню, вводит свои данные и получает результат. После проверки можно ввести другой набор. Готовые примеры запускаются с --demo. В ЛР5 и ЛР6 подключение к Telegram запускается отдельно с --telegram; по умолчанию используется локальный диалог без токена.
 
 ## 4 Порядок запуска
 Команды выполняются из папки работы в подготовленном окружении.
 ```powershell
 python -m pip install -r requirements.txt
-python main.py --demo
+python main.py
 python -m unittest discover -s tests -v
 ```
 
 Запуск с подключением к Telegram в PowerShell:
 ```powershell
 $env:TELEGRAM_BOT_TOKEN = 'ваш_токен'
-python main.py
+python main.py --telegram
 ```
 Файл .env автоматически не загружается. Токен в отчет и Git не добавляется.
 
@@ -67,6 +67,9 @@ $ python main.py --demo
 ### Экранная форма выполнения
 ![Экранная форма консольного вывода](demo.png)
 
+### Ручная проверка со своими значениями
+![Экранная форма консольного вывода](manual.png)
+
 ### Модульные тесты
 ```text
 test_invalid_input (test_fsm.TestCalculator.test_invalid_input) ... ok
@@ -80,7 +83,7 @@ test_restart (test_fsm.TestFSM.test_restart) ... ok
 test_users_are_isolated (test_fsm.TestFSM.test_users_are_isolated) ... ok
 
 ----------------------------------------------------------------------
-Ran 8 tests in 1.158s
+Ran 8 tests in 3.841s
 
 OK
 ```
@@ -127,6 +130,51 @@ def run():
 
 if __name__ == "__main__":
     run()
+```
+
+### interactive.py
+```python
+"""Живой консольный диалог через настоящие обработчики автомата."""
+import asyncio
+from types import SimpleNamespace
+from demo import display
+from lab_telegram_fsm.bot import (
+    SHAPE, DIMENSIONS, CONFIRM, start, choose_shape, enter_dimensions, confirm, cancel,
+)
+
+
+async def interactive():
+    print("Локальный режим без токена Telegram. /exit — выход, /start — сначала, /cancel — отмена.")
+    context = SimpleNamespace(user_data={})
+    message = SimpleNamespace(text="", reply_text=display)
+    update = SimpleNamespace(effective_message=message)
+    state = await start(update, context)
+    handlers = {SHAPE: choose_shape, DIMENSIONS: enter_dimensions, CONFIRM: confirm}
+    while True:
+        if state == SHAPE:
+            print("1 — Квадрат; 2 — Прямоугольник; 3 — Круг; 0 — Выход")
+        elif state == CONFIRM:
+            print("1 — Да; 2 — Заново")
+        text = input("Вы: ").strip()
+        if text == "/exit" or (state in (SHAPE, -1) and text == "0"):
+            return
+        if text == "/start":
+            state = await start(update, context)
+        elif text == "/cancel":
+            state = await cancel(update, context)
+        elif state in handlers:
+            if state == SHAPE:
+                text = {"1": "Квадрат", "2": "Прямоугольник", "3": "Круг"}.get(text, text)
+            elif state == CONFIRM:
+                text = {"1": "Да", "2": "Заново"}.get(text, text)
+            message.text = text
+            state = await handlers[state](update, context)
+        else:
+            print("Для нового расчета введите /start, для выхода — /exit или 0.")
+
+
+def run():
+    asyncio.run(interactive())
 ```
 
 ### lab_telegram_fsm/bot.py
@@ -269,11 +317,17 @@ from lab_telegram_fsm.bot import main
 
 
 if __name__ == "__main__":
-    if "--demo" in sys.argv:
-        from demo import run
-        run()
-    else:
-        main()
+    try:
+        if "--demo" in sys.argv:
+            from demo import run
+            run()
+        elif "--telegram" in sys.argv:
+            main()
+        else:
+            from interactive import run
+            run()
+    except (EOFError, KeyboardInterrupt):
+        print("\nПрограмма завершена.")
 ```
 
 ### requirements.txt

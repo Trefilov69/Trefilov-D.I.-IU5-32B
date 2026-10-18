@@ -5,7 +5,7 @@ test_rectangle (test_figures.TestFigures.test_rectangle) ... ok
 test_square (test_figures.TestFigures.test_square) ... ok
 
 ----------------------------------------------------------------------
-Ran 5 tests in 0.001s
+Ran 5 tests in 0.002s
 
 OK
 USING RUNNER: behave.runner:Runner
@@ -29,4 +29,4 @@ USING RUNNER: behave.runner:Runner
 1 feature passed, 0 failed, 0 skipped
 3 scenarios passed, 0 failed, 0 skipped
 9 steps passed, 0 failed, 0 skipped
-Took 0min 0.000s
+Took 0min 0.006s

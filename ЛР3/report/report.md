@@ -20,7 +20,7 @@
 Список курса: https://github.com/ugapanyuk/courses_content/wiki/COURSE_PCPL_MAIN
 
 ## 3 Структура и логика программы
-Взят расчет площадей фигур из ЛР2. В самостоятельном пакете lab_python_test вычисления отделены от консоли. Размеры преобразуются в числа, нулевые, отрицательные и бесконечные значения отклоняются. print_area принимает зависимость output, что позволяет проверить вывод без обращения к терминалу. unittest используется как фреймворк модульного тестирования, behave выполняет русскоязычные сценарии Given When Then. Исходная ЛР2 остается самостоятельной.
+Взят расчет площадей фигур из ЛР2. В самостоятельном пакете lab_python_test вычисления отделены от консоли. Размеры преобразуются в числа, нулевые, отрицательные и бесконечные значения отклоняются. print_area принимает зависимость output, что позволяет проверить вывод без обращения к терминалу. unittest используется как фреймворк модульного тестирования, behave выполняет русскоязычные сценарии Given When Then. Исходная ЛР2 остается самостоятельной. Обычный запуск main.py открывает ручной ввод: пользователь выбирает пункт меню, вводит свои данные и получает результат. После проверки можно ввести другой набор. Готовые примеры запускаются с --demo. В ЛР5 и ЛР6 подключение к Telegram запускается отдельно с --telegram; по умолчанию используется локальный диалог без токена.
 
 ## 4 Порядок запуска
 Команды выполняются из папки работы в подготовленном окружении.
@@ -36,7 +36,7 @@ python -m behave
 
 ### Пример выполнения
 ```text
-$ python main.py
+$ python main.py --demo
 Rectangle
 Площадь: 20.00
 Square
@@ -48,6 +48,9 @@ Circle
 ### Экранная форма выполнения
 ![Экранная форма консольного вывода](demo.png)
 
+### Ручная проверка со своими значениями
+![Экранная форма консольного вывода](manual.png)
+
 ### Модульные тесты
 ```text
 test_circle (test_figures.TestFigures.test_circle) ... ok
@@ -57,7 +60,7 @@ test_rectangle (test_figures.TestFigures.test_rectangle) ... ok
 test_square (test_figures.TestFigures.test_square) ... ok
 
 ----------------------------------------------------------------------
-Ran 5 tests in 0.001s
+Ran 5 tests in 0.002s
 
 OK
 ```
@@ -87,7 +90,7 @@ USING RUNNER: behave.runner:Runner
 1 feature passed, 0 failed, 0 skipped
 3 scenarios passed, 0 failed, 0 skipped
 9 steps passed, 0 failed, 0 skipped
-Took 0min 0.000s
+Took 0min 0.006s
 ```
 
 ## 6 Выводы
@@ -148,17 +151,47 @@ def print_area(figure, output=print):
 
 ### main.py
 ```python
+import math
+import sys
 from lab_python_test.figures import Rectangle, Square, Circle, print_area
 
 
-def main():
+def demo():
     for figure in (Rectangle(5, 4), Square(5), Circle(5)):
         print(type(figure).__name__)
         print_area(figure)
 
 
+def main():
+    while True:
+        print("\n1 — Прямоугольник\n2 — Квадрат\n3 — Круг\n0 — Выход")
+        choice = input("Выберите фигуру: ").strip()
+        if choice == "0":
+            return
+        try:
+            if choice == "1":
+                width = input("Ширина: ").replace(",", ".")
+                height = input("Высота: ").replace(",", ".")
+                figure = Rectangle(width, height)
+            elif choice == "2":
+                figure = Square(input("Сторона: ").replace(",", "."))
+            elif choice == "3":
+                figure = Circle(input("Радиус: ").replace(",", "."))
+            else:
+                print("Введите номер от 0 до 3.")
+                continue
+            if not math.isfinite(figure.square()) or figure.square() <= 0:
+                raise ValueError("Размеры вне поддерживаемого диапазона")
+            print_area(figure)
+        except (ValueError, OverflowError) as exc:
+            print(f"Ошибка: {exc}. Попробуйте снова.")
+
+
 if __name__ == "__main__":
-    main()
+    try:
+        demo() if "--demo" in sys.argv else main()
+    except (EOFError, KeyboardInterrupt):
+        print("\nПрограмма завершена.")
 ```
 
 ### requirements.txt

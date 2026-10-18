@@ -1,4 +1,4 @@
-$ python main.py
+$ python main.py --demo
 Кофе: 150 руб.
 Чай: 100 руб.
 Кофе с молоком: 180 руб.

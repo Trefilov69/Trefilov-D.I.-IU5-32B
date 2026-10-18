@@ -1,4 +1,4 @@
-$ python main.py
+$ python main.py --demo
 Rectangle
 Площадь: 20.00
 Square

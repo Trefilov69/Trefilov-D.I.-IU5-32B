@@ -1,7 +1,7 @@
 import unittest
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
-from lab_telegram_bot.bot import start, choose_figure, keyboard, build_application
+from lab_telegram_bot.bot import start, choose_figure, keyboard, build_application, area_command
 
 
 class TestBot(unittest.IsolatedAsyncioTestCase):
@@ -26,9 +26,24 @@ class TestBot(unittest.IsolatedAsyncioTestCase):
 
     async def test_application_configuration(self):
         app = build_application("123456:LOCAL_TEST_TOKEN")
-        self.assertEqual(len(app.handlers[0]), 3)
+        self.assertEqual(len(app.handlers[0]), 4)
         self.assertEqual([row[0].callback_data for row in keyboard().inline_keyboard],
                          ["square", "rectangle", "circle"])
+
+    async def test_custom_dimensions(self):
+        message = SimpleNamespace(reply_text=AsyncMock())
+        for args, expected in ((["rectangle", "6", "7"], "42.00"),
+                               (["square", "2,5"], "6.25"),
+                               (["circle", "2"], "12.57"),
+                               (["square", "nan"], "Ошибка"),
+                               (["square", "-2"], "Ошибка"),
+                               (["rectangle", "2"], "Ошибка"),
+                               (["square", "1e308"], "Ошибка"),
+                               ([], "Ошибка")):
+            with self.subTest(args=args):
+                await area_command(SimpleNamespace(effective_message=message),
+                                   SimpleNamespace(args=args))
+                self.assertIn(expected, message.reply_text.call_args.args[0])
 
 
 if __name__ == "__main__":

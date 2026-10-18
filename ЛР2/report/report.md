@@ -20,7 +20,7 @@
 Список курса: https://github.com/ugapanyuk/courses_content/wiki/COURSE_PCPL_MAIN
 
 ## 3 Структура и логика программы
-GeometricFigure задает абстрактный метод square. Rectangle и Circle реализуют вычисление площади, Square наследует Rectangle. FigureColor хранит цвет в свойстве. Методы класса возвращают название фигуры, __repr__ формирует строку с параметрами. Существующий код и отчет Word сохранены.
+GeometricFigure задает абстрактный метод square. Rectangle и Circle реализуют вычисление площади, Square наследует Rectangle. FigureColor хранит цвет в свойстве. Методы класса возвращают название фигуры, __repr__ формирует строку с параметрами. Существующий код и отчет Word сохранены. Обычный запуск main.py открывает ручной ввод: пользователь выбирает пункт меню, вводит свои данные и получает результат. После проверки можно ввести другой набор. Готовые примеры запускаются с --demo. В ЛР5 и ЛР6 подключение к Telegram запускается отдельно с --telegram; по умолчанию используется локальный диалог без токена.
 
 ## 4 Порядок запуска
 Команды выполняются из папки работы в подготовленном окружении.
@@ -35,7 +35,7 @@ python -m unittest discover -s tests -v
 
 ### Пример выполнения
 ```text
-$ python main.py
+$ python main.py --demo
 Прямоугольник: ширина = 5, высота = 5, цвет = синий, площадь = 25
 Круг: радиус = 5, цвет = зеленый, площадь = 78.54
 Квадрат: сторона = 5, цвет = красный, площадь = 25
@@ -45,6 +45,9 @@ $ python main.py
 ### Экранная форма выполнения
 ![Экранная форма консольного вывода](demo.png)
 
+### Ручная проверка со своими значениями
+![Экранная форма консольного вывода](manual.png)
+
 ### Модульные тесты
 ```text
 test_circle_square (test_figures.TestFigures.test_circle_square) ... ok
@@ -52,7 +55,7 @@ test_rectangle_square (test_figures.TestFigures.test_rectangle_square) ... ok
 test_square_square (test_figures.TestFigures.test_square_square) ... ok
 
 ----------------------------------------------------------------------
-Ran 3 tests in 0.000s
+Ran 3 tests in 0.001s
 
 OK
 ```
@@ -182,12 +185,14 @@ class Square(Rectangle):
 ```python
 from colorama import Fore, Style, init
 
+import math
+import sys
 from lab_python_oop.rectangle import Rectangle
 from lab_python_oop.circle import Circle
 from lab_python_oop.square import Square
 
 
-def main():
+def demo():
     init()
 
     n = 5
@@ -207,8 +212,44 @@ def main():
     )
 
 
+def read_size(prompt):
+    value = float(input(prompt).replace(",", "."))
+    if not math.isfinite(value) or value <= 0:
+        raise ValueError("Размер должен быть конечным положительным числом")
+    return value
+
+
+def main():
+    init()
+    while True:
+        print("\n1 — Прямоугольник\n2 — Квадрат\n3 — Круг\n0 — Выход")
+        choice = input("Выберите фигуру: ").strip()
+        if choice == "0":
+            return
+        if choice not in ("1", "2", "3"):
+            print("Введите номер от 0 до 3.")
+            continue
+        try:
+            if choice == "1":
+                dimensions = (read_size("Ширина: "), read_size("Высота: "))
+                constructor = Rectangle
+            else:
+                dimensions = (read_size("Радиус: " if choice == "3" else "Сторона: "),)
+                constructor = Circle if choice == "3" else Square
+            color = input("Цвет (Enter — синий): ").strip() or "синий"
+            figure = constructor(*dimensions, color)
+            if not math.isfinite(figure.square()) or figure.square() <= 0:
+                raise ValueError("Размеры вне поддерживаемого диапазона")
+            print(Fore.CYAN + str(figure) + Style.RESET_ALL)
+        except (ValueError, OverflowError) as exc:
+            print(f"Ошибка: {exc}. Попробуйте снова.")
+
+
 if __name__ == "__main__":
-    main()
+    try:
+        demo() if "--demo" in sys.argv else main()
+    except (EOFError, KeyboardInterrupt):
+        print("\nПрограмма завершена.")
 ```
 
 ### requirements.txt

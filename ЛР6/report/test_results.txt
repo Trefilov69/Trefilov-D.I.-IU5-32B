@@ -9,6 +9,6 @@ test_restart (test_fsm.TestFSM.test_restart) ... ok
 test_users_are_isolated (test_fsm.TestFSM.test_users_are_isolated) ... ok
 
 ----------------------------------------------------------------------
-Ran 8 tests in 1.158s
+Ran 8 tests in 3.841s
 
 OK

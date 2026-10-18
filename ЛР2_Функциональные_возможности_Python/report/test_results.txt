@@ -7,6 +7,6 @@ test_timers_propagate_exception (test_fp.TestFunctional.test_timers_propagate_ex
 test_unique (test_fp.TestFunctional.test_unique) ... ok
 
 ----------------------------------------------------------------------
-Ran 7 tests in 0.001s
+Ran 7 tests in 0.004s
 
 OK

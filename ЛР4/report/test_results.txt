@@ -7,7 +7,7 @@ test_nested_decorator (test_patterns.TestPatterns.test_nested_decorator) ... ok
 test_strategy (test_patterns.TestPatterns.test_strategy) ... ok
 
 ----------------------------------------------------------------------
-Ran 7 tests in 0.003s
+Ran 7 tests in 0.008s
 
 OK
 USING RUNNER: behave.runner:Runner
@@ -34,4 +34,4 @@ USING RUNNER: behave.runner:Runner
 1 feature passed, 0 failed, 0 skipped
 3 scenarios passed, 0 failed, 0 skipped
 12 steps passed, 0 failed, 0 skipped
-Took 0min 0.002s
+Took 0min 0.018s

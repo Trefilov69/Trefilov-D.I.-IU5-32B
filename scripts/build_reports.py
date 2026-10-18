@@ -37,7 +37,7 @@ LABS = {
         "logic": "GeometricFigure задает абстрактный метод square. Rectangle и Circle реализуют вычисление площади, Square наследует Rectangle. FigureColor хранит цвет в свойстве. Методы класса возвращают название фигуры, __repr__ формирует строку с параметрами. Существующий код и отчет Word сохранены.",
         "checks": "Три теста unittest проверяют площади прямоугольника 5 × 4, квадрата со стороной 5 и круга с радиусом 5. Для круга используется сравнение с допустимой погрешностью.",
         "conclusion": "Реализованы и проверены основные механизмы ООП и использование внешнего пакета colorama.",
-        "demo": [["main.py"]],
+        "demo": [["main.py", "--demo"]],
     },
     FP: {
         "number": "2", "title": "Функциональные возможности языка Python",
@@ -60,7 +60,7 @@ LABS = {
         "logic": "Взят расчет площадей фигур из ЛР2. В самостоятельном пакете lab_python_test вычисления отделены от консоли. Размеры преобразуются в числа, нулевые, отрицательные и бесконечные значения отклоняются. print_area принимает зависимость output, что позволяет проверить вывод без обращения к терминалу. unittest используется как фреймворк модульного тестирования, behave выполняет русскоязычные сценарии Given When Then. Исходная ЛР2 остается самостоятельной.",
         "checks": "Пять тестов unittest проверяют три площади, некорректные размеры и вызов Mock-функции вывода. Три BDD-сценария проверяют площади прямоугольника, квадрата и круга с точки зрения наблюдаемого результата.",
         "conclusion": "Тесты подтверждают вычисления, обработку неверных размеров и консольное представление результата. BDD-сценарии описывают поведение на языке предметной области.",
-        "demo": [["main.py"]], "bdd": True,
+        "demo": [["main.py", "--demo"]], "bdd": True,
     },
     "ЛР4": {
         "number": "4", "title": "Шаблоны проектирования и модульное тестирование в Python",
@@ -70,7 +70,7 @@ LABS = {
         "logic": "Предметная область - заказ напитка в кафе. Порождающий Фабричный метод: Cafe определяет create_product и использующий его order_price; CoffeeCafe и TeaCafe создают конкретные продукты. Структурный Декоратор: Milk оборачивает Product, сохраняет интерфейс price и добавляет 30 рублей. Поведенческая Стратегия: Order делегирует расчет RegularPrice или StudentDiscount. Денежные значения хранятся в Decimal; студенческая скидка равна 10 процентам.",
         "checks": "Семь тестов unittest проверяют фабрики, цену чая, декоратор и его вложение, обычную цену и скидку. Mock-объекты подменяют стратегию и продукт, проверяя аргументы и число вызовов. Три сценария behave проверяют кофе за 150 рублей, кофе с молоком за 180 рублей и заказ со скидкой за 162 рубля.",
         "conclusion": "Все три категории шаблонов представлены в единой модели заказа. Модульные проверки и BDD-сценарии подтверждают расчет стоимости и взаимодействие зависимостей.",
-        "demo": [["main.py"]], "bdd": True,
+        "demo": [["main.py", "--demo"]], "bdd": True,
     },
     "ЛР5": {
         "number": "5", "title": "Разработка простого бота для Telegram",
@@ -95,11 +95,21 @@ LABS = {
 }
 
 
-def run(folder, args):
+MANUAL_INPUTS = {
+    "ЛР2": "1\n6\n7\nкрасный\n0\n",
+    FP: "4\n-7 2 -3\n0\n",
+    "ЛР3": "2\n7\n0\n",
+    "ЛР4": "2\n2\nда\n0\n",
+    "ЛР5": "2\n6 7\n0\n",
+    "ЛР6": "2\n6 7\n1\n0\n",
+}
+
+
+def run(folder, args, input_data=None):
     env = dict(os.environ, PYTHONUTF8="1", PYTHONIOENCODING="utf-8")
     result = subprocess.run([sys.executable, *args], cwd=ROOT / folder, env=env,
                             text=True, encoding="utf-8", stdout=subprocess.PIPE,
-                            stderr=subprocess.STDOUT, timeout=120)
+                            stderr=subprocess.STDOUT, timeout=120, input=input_data)
     if result.returncode:
         raise RuntimeError(f"{folder}: {args}\n{result.stdout}")
     return result.stdout
@@ -146,14 +156,14 @@ def make_markdown(folder, spec, demo, tests, bdd, demo_images):
              "## 3 Структура и логика программы", spec["logic"], "",
              "## 4 Порядок запуска", "Команды выполняются из папки работы в подготовленном окружении.",
              "```powershell", "python -m pip install -r requirements.txt",
-             "python main.py" + (" --demo" if spec.get("telegram") else ""),
+             "python main.py",
              "python -m unittest discover -s tests -v"]
     if spec.get("bdd"):
         lines.append("python -m behave")
     lines += ["```", ""]
     if spec.get("telegram"):
         lines += ["Запуск с подключением к Telegram в PowerShell:", "```powershell",
-                  "$env:TELEGRAM_BOT_TOKEN = 'ваш_токен'", "python main.py", "```",
+                  "$env:TELEGRAM_BOT_TOKEN = 'ваш_токен'", "python main.py --telegram", "```",
                   "Файл .env автоматически не загружается. Токен в отчет и Git не добавляется.", ""]
     if folder == FP:
         lines += ["Полный исходный набор: data_light.json, 4635 записей, 14232722 байт.",
@@ -317,6 +327,10 @@ def main():
                 filename = f"task-{index}.png"
                 screenshot(chunk, report_dir / filename)
                 demo_images.append((f"Задача {index} {Path(arguments[0]).stem}", filename))
+        manual = ("$ python main.py\nВвод по строкам: " +
+                  " | ".join(MANUAL_INPUTS[folder].rstrip().splitlines()) + "\n" +
+                  run(folder, ["main.py"], MANUAL_INPUTS[folder]))
+        screenshot(manual, report_dir / "manual.png")
         tests = run(folder, ["-m", "unittest", "discover", "-s", "tests", "-v"])
         # asyncio в debug-режиме может включать абсолютные пути в slow-callback diagnostic.
         tests = "\n".join(line for line in tests.splitlines() if not line.startswith("Executing <Task")) + "\n"
@@ -331,6 +345,7 @@ def main():
         screenshot(demo, report_dir / "demo.png")
         if not demo_images:
             demo_images = [("Экранная форма выполнения", "demo.png")]
+        demo_images.append(("Ручная проверка со своими значениями", "manual.png"))
         screenshot(tests, report_dir / "tests.png")
         markdown = make_markdown(folder, spec, demo, tests, bdd, demo_images)
         (report_dir / "report.md").write_text(markdown, encoding="utf-8")
@@ -340,13 +355,13 @@ def main():
         readme = (f"# {spec['title']}\n\nЗадание: {spec['source']}\n\n"
                   "Запуск из этой папки в PowerShell после подготовки .venv в корне:\n\n"
                   "```powershell\n../.venv/Scripts/python.exe -m pip install -r requirements.txt\n"
-                  "../.venv/Scripts/python.exe main.py" + (" --demo" if spec.get("telegram") else "") +
+                  "../.venv/Scripts/python.exe main.py" +
                   "\n../.venv/Scripts/python.exe -m unittest discover -s tests -v\n" +
                   ("../.venv/Scripts/python.exe -m behave\n" if spec.get("bdd") else "") + "```\n\n")
         if spec.get("telegram"):
             readme += ("Подключение к Telegram:\n\n```powershell\n"
                        "$env:TELEGRAM_BOT_TOKEN = 'ваш_токен_от_BotFather'\n"
-                       "../.venv/Scripts/python.exe main.py\n```\n\n"
+                       "../.venv/Scripts/python.exe main.py --telegram\n```\n\n"
                        "Токен читается из окружения; .env не загружается автоматически. "
                        "Локальная демонстрация и тесты работают без токена. "
                        "Проверка подключения к Telegram API без токена не выполнялась.\n\n")
@@ -362,10 +377,24 @@ def main():
                        "Ошибки сохраняют текущее состояние. /start начинает новый расчет. "
                        "END обозначает завершение, а не четвертое состояние. "
                        "Данные хранятся в памяти до завершения разговора или перезапуска процесса.\n\n")
-        readme += "Отчет: [исходник Markdown](report/report.md), [PDF](report/report.pdf).\n"
+        readme += ("При обычном запуске main.py (в том числе кнопкой ▶ в VS Code) "
+                   "открывается ручной ввод. Выбирайте пункт меню и вводите свои значения "
+                   "в панели Терминал. Можно выполнить несколько проверок подряд. "
+                   "Для выхода введите 0; в диалоге ЛР6 также доступна /exit. "
+                   "Режим --demo показывает готовый пример без ручного ввода.\n\n"
+                   "Отчет: [исходник Markdown](report/report.md), [PDF](report/report.pdf).\n")
         (ROOT / folder / "README.md").write_text(readme, encoding="utf-8")
         print(f"{folder}: {pages} pages; tests passed", flush=True)
 
 
 if __name__ == "__main__":
+    for specification in LABS.values():
+        specification["logic"] += (
+            " Обычный запуск main.py открывает ручной ввод: пользователь выбирает пункт меню, "
+            "вводит свои данные и получает результат. После проверки можно ввести другой набор. "
+            "Готовые примеры запускаются с --demo. В ЛР5 и ЛР6 подключение к Telegram "
+            "запускается отдельно с --telegram; по умолчанию используется локальный диалог без токена.")
+    LABS["ЛР5"]["logic"] += " Команда /area позволяет ввести свои размеры и в Telegram."
+    LABS["ЛР5"]["checks"] = LABS["ЛР5"]["checks"].replace("Четыре", "Пять") + (
+        " Дополнительный тест проверяет расчет пользовательских размеров и ошибки команды /area.")
     main()
