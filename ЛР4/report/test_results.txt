@@ -1,0 +1,37 @@
+test_decorator (test_patterns.TestPatterns.test_decorator) ... ok
+test_default_strategy (test_patterns.TestPatterns.test_default_strategy) ... ok
+test_factory_products (test_patterns.TestPatterns.test_factory_products) ... ok
+test_mock_product (test_patterns.TestPatterns.test_mock_product) ... ok
+test_mock_strategy (test_patterns.TestPatterns.test_mock_strategy) ... ok
+test_nested_decorator (test_patterns.TestPatterns.test_nested_decorator) ... ok
+test_strategy (test_patterns.TestPatterns.test_strategy) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.003s
+
+OK
+USING RUNNER: behave.runner:Runner
+Функция: Расчет стоимости заказа в кафе # features/orders.feature:2
+
+  Сценарий: Фабричный метод создает кофе  # features/orders.feature:3
+    Допустим кафе создало кофе            # features/steps/order_steps.py:6
+    Когда рассчитана стоимость заказа     # features/steps/order_steps.py:22
+    Тогда к оплате 150 рублей             # features/steps/order_steps.py:27
+
+  Сценарий: Декоратор добавляет молоко  # features/orders.feature:8
+    Допустим кафе создало кофе          # features/steps/order_steps.py:6
+    И к напитку добавлено молоко        # features/steps/order_steps.py:12
+    Когда рассчитана стоимость заказа   # features/steps/order_steps.py:22
+    Тогда к оплате 180 рублей           # features/steps/order_steps.py:27
+
+  Сценарий: Стратегия применяет скидку студента  # features/orders.feature:14
+    Допустим кафе создало кофе                   # features/steps/order_steps.py:6
+    И к напитку добавлено молоко                 # features/steps/order_steps.py:12
+    И выбрана скидка студента                    # features/steps/order_steps.py:17
+    Когда рассчитана стоимость заказа            # features/steps/order_steps.py:22
+    Тогда к оплате 162 рублей                    # features/steps/order_steps.py:27
+
+1 feature passed, 0 failed, 0 skipped
+3 scenarios passed, 0 failed, 0 skipped
+12 steps passed, 0 failed, 0 skipped
+Took 0min 0.002s
