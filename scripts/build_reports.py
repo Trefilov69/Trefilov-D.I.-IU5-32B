@@ -324,8 +324,9 @@ def main():
         bdd = run(folder, ["-m", "behave", "--no-capture"]) if spec.get("bdd") else ""
         if folder == FP:
             full_output = run(folder, ["main.py", "data_light.json"])
-            (report_dir / "full_data_output.txt").write_text(full_output, encoding="utf-8")
-        (report_dir / "demo_output.txt").write_text(demo, encoding="utf-8")
+            (report_dir / "full_data_output.txt").write_text(
+                "\n".join(line.rstrip() for line in full_output.splitlines()).rstrip() + "\n", encoding="utf-8")
+        (report_dir / "demo_output.txt").write_text(demo.rstrip() + "\n", encoding="utf-8")
         (report_dir / "test_results.txt").write_text(tests + bdd, encoding="utf-8")
         screenshot(demo, report_dir / "demo.png")
         if not demo_images:
