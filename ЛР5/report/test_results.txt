@@ -1,0 +1,10 @@
+test_all_buttons (test_bot.TestBot.test_all_buttons) ... ok
+test_application_configuration (test_bot.TestBot.test_application_configuration) ...
+ok
+test_start_buttons (test_bot.TestBot.test_start_buttons) ... ok
+test_unknown_callback (test_bot.TestBot.test_unknown_callback) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 1.262s
+
+OK
