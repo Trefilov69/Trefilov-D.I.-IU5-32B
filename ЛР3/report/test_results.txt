@@ -1,0 +1,32 @@
+test_circle (test_figures.TestFigures.test_circle) ... ok
+test_invalid_dimensions (test_figures.TestFigures.test_invalid_dimensions) ... ok
+test_output_with_mock (test_figures.TestFigures.test_output_with_mock) ... ok
+test_rectangle (test_figures.TestFigures.test_rectangle) ... ok
+test_square (test_figures.TestFigures.test_square) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.001s
+
+OK
+USING RUNNER: behave.runner:Runner
+Функция: Вычисление площади геометрических фигур # features/figures.feature:2
+
+  Сценарий: Площадь прямоугольника            # features/figures.feature:3
+    Допустим прямоугольник со сторонами 5 и 4 # features/steps/figure_steps.py:6
+    Когда вычислена площадь                   # features/steps/figure_steps.py:21
+    Тогда площадь равна 20                    # features/steps/figure_steps.py:26
+
+  Сценарий: Площадь квадрата       # features/figures.feature:8
+    Допустим квадрат со стороной 5 # features/steps/figure_steps.py:11
+    Когда вычислена площадь        # features/steps/figure_steps.py:21
+    Тогда площадь равна 25         # features/steps/figure_steps.py:26
+
+  Сценарий: Площадь круга                 # features/figures.feature:13
+    Допустим круг с радиусом 5            # features/steps/figure_steps.py:16
+    Когда вычислена площадь               # features/steps/figure_steps.py:21
+    Тогда площадь равна 78.53981633974483 # features/steps/figure_steps.py:26
+
+1 feature passed, 0 failed, 0 skipped
+3 scenarios passed, 0 failed, 0 skipped
+9 steps passed, 0 failed, 0 skipped
+Took 0min 0.000s

@@ -1,0 +1,7 @@
+$ python main.py
+Rectangle
+Площадь: 20.00
+Square
+Площадь: 25.00
+Circle
+Площадь: 78.54
