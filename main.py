@@ -1,4 +1,5 @@
 """Общее меню лабораторных. Также запускается файлом Запустить лабораторные.cmd."""
+import argparse
 import os
 from pathlib import Path
 import runpy
@@ -47,7 +48,13 @@ def run_lab(choice):
 def main():
     python_venv = ROOT / ".venv" / "Scripts" / "python.exe"
     if python_venv.exists() and Path(sys.executable).resolve() != python_venv.resolve():
-        os.execv(str(python_venv), [str(python_venv), str(Path(__file__).resolve())])
+        os.execv(str(python_venv), [str(python_venv), str(Path(__file__).resolve()), *sys.argv[1:]])
+    parser = argparse.ArgumentParser(description="Запуск лабораторных работ")
+    parser.add_argument("--lab", choices=LABS, help="Открыть выбранную работу напрямую")
+    args = parser.parse_args()
+    if args.lab:
+        run_lab(args.lab)
+        return
     while True:
         print("\nЛАБОРАТОРНЫЕ РАБОТЫ")
         for number, (title, _) in LABS.items():
