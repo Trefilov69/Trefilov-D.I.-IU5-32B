@@ -1,0 +1,12 @@
+test_decorator (test_fp.TestFunctional.test_decorator) ... ok
+test_field_many (test_fp.TestFunctional.test_field_many) ... ok
+test_field_one (test_fp.TestFunctional.test_field_one) ... ok
+test_pipeline (test_fp.TestFunctional.test_pipeline) ... ok
+test_random_boundaries (test_fp.TestFunctional.test_random_boundaries) ... ok
+test_timers_propagate_exception (test_fp.TestFunctional.test_timers_propagate_exception) ... ok
+test_unique (test_fp.TestFunctional.test_unique) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.001s
+
+OK

@@ -1,0 +1,46 @@
+$ python lab_python_fp/field.py
+['Ковер', 'Диван для отдыха']
+[{'title': 'Ковер', 'price': 2000}, {'title': 'Диван для отдыха'}]
+
+$ python lab_python_fp/gen_random.py
+[2, 2, 3, 1, 2]
+
+$ python lab_python_fp/unique.py
+['a', 'A', 'b', 'B']
+['a', 'b']
+
+$ python lab_python_fp/sort.py
+[123, 100, -100, -30, 30, 4, -4, 1, -1, 0]
+[123, 100, -100, -30, 30, 4, -4, 1, -1, 0]
+
+$ python lab_python_fp/print_result.py
+test_1
+1
+test_2
+iu5
+test_3
+a = 1
+b = 2
+test_4
+1
+2
+
+$ python lab_python_fp/cm_timer.py
+time: 0.010806
+time: 0.010683
+
+$ python main.py data_demo.json
+f1
+Аналитик
+Программист C#
+Программист Python
+f2
+Программист C#
+Программист Python
+f3
+Программист C# с опытом Python
+Программист Python с опытом Python
+f4
+Программист C# с опытом Python, зарплата 119379 руб.
+Программист Python с опытом Python, зарплата 155479 руб.
+time: 0.000079
