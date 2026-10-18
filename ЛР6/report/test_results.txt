@@ -1,0 +1,14 @@
+test_invalid_input (test_fsm.TestCalculator.test_invalid_input) ... ok
+test_shapes (test_fsm.TestCalculator.test_shapes) ... ok
+test_cancel_from_each_state (test_fsm.TestFSM.test_cancel_from_each_state) ... ok
+test_errors_preserve_state (test_fsm.TestFSM.test_errors_preserve_state) ... ok
+test_exactly_three_states (test_fsm.TestFSM.test_exactly_three_states) ...
+ok
+test_full_dialogue (test_fsm.TestFSM.test_full_dialogue) ... ok
+test_restart (test_fsm.TestFSM.test_restart) ... ok
+test_users_are_isolated (test_fsm.TestFSM.test_users_are_isolated) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 1.158s
+
+OK
